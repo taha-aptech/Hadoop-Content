@@ -1,0 +1,128 @@
+
+
+1. Extract, Transform, Load (ETL) in Hadoop (Using PySpark) 
+Hadoop ke ETL process ke liye **PySpark** use kiya gaya hai, jo distributed data processing ke liye best hai.  
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, when
+from pyspark.sql.types import IntegerType, FloatType
+
+# Step 1: Initialize Spark Session
+spark = SparkSession.builder.appName("ClimateAnomalyETL").getOrCreate()
+
+# Step 2: Load Data (Extract)
+df = spark.read.csv("hdfs://localhost:9000/user/hadoop/climate_data.csv", header=True, inferSchema=True)
+
+# Step 3: Transform Data
+df = df.withColumn("Temperature", col("Temperature").cast(FloatType())) \
+       .withColumn("Humidity", col("Humidity").cast(FloatType())) \
+       .withColumn("Anomaly_Label", when(col("Anomaly_Label") == "Normal", 0).otherwise(1))
+
+# Step 4: Handle Missing Values
+df = df.dropna()
+
+# Step 5: Save Transformed Data (Load)
+df.write.mode("overwrite").csv("hdfs://localhost:9000/user/hadoop/transformed_climate_data")
+
+print("ETL Process Completed Successfully!")
+```
+
+**Explanation**:  
+- **Extract**: Data load kiya from **HDFS**  
+- **Transform**: Data ko **float type** mein convert kiya, missing values remove ki, aur categorical labels ko **binary format** mein map kiya  
+- **Load**: Cleaned aur transformed data ko **HDFS mein wapis save** kiya  
+
+---
+
+### **2. Hadoop MapReduce for Climate Data Processing**  
+Yeh **MapReduce program** dataset ke upar chal kar **temperature-based anomaly detection** karta hai.  
+
+#### **Mapper (Python)**  
+```python
+import sys
+
+# Read input line by line
+for line in sys.stdin:
+    line = line.strip()
+    parts = line.split(",")  # Assuming CSV format
+
+    if len(parts) > 2:  # Ensure valid data
+        date, temp, humidity, label = parts[0], parts[1], parts[2], parts[3]
+        
+        try:
+            temp = float(temp)
+            if temp > 40:  # Example threshold for anomaly
+                print(f"{date}\tAnomaly")
+            else:
+                print(f"{date}\tNormal")
+        except ValueError:
+            continue
+```
+
+**Explanation**:  
+- Har line read karta hai  
+- Temperature check karta hai (agar **40°C se upar** hai toh "Anomaly" print karega, warna "Normal")  
+
+---
+
+#### **Reducer (Python)**  
+```python
+import sys
+from collections import defaultdict
+
+counts = defaultdict(int)
+
+for line in sys.stdin:
+    line = line.strip()
+    date, status = line.split("\t")
+    counts[status] += 1  # Count anomalies and normal readings
+
+# Output the final counts
+for status, count in counts.items():
+    print(f"{status}\t{count}")
+```
+
+**Explanation**:  
+- **Normal aur Anomalies ka count** store karta hai  
+- Final output show karta hai  
+
+---
+
+### **3. Running MapReduce Job in Hadoop**  
+Ye commands use karni hongi:  
+```bash
+hdfs dfs -put climate_data.csv /user/hadoop/input
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+    -input /user/hadoop/input/climate_data.csv \
+    -output /user/hadoop/output \
+    -mapper "python3 mapper.py" \
+    -reducer "python3 reducer.py"
+
+hdfs dfs -cat /user/hadoop/output/part-*
+```
+
+**Explanation**:  
+- **Data ko HDFS mein upload** karna  
+- **Hadoop Streaming** use karke **MapReduce job run** karna  
+- **Output ko check** karna  
+
+---
+
+### **4. Final Output Example**  
+```
+Anomaly	120
+Normal	880
+```
+
+Yeh output batata hai ke **120 anomalies detect hui hain aur 880 normal readings hain**.  
+
+---
+
+### **Complete Project Deliverables**  
+- **ETL Process** using PySpark  
+- **MapReduce Code** (Mapper + Reducer)  
+- **Commands for Execution**  
+- **Final Output Example**  
+
+Agar koi aur modifications chahiyein toh batao.

@@ -1,0 +1,20 @@
+VMWare Workstation / Oracle Virtual Box
+
+HDP Sandbox link: https://archive.cloudera.com/hwx-sandbox/hdp/hdp-2.6.5/HDP_2.6.5_virtualbox_180626.ova
+
+
+ls: This command is used to list all the files. 
+mkdir: To create a directory. 
+touchz: It creates an empty file. 
+copyFromLocal (or) put: To copy files/folders from local file system to hdfs store. 
+cat: To print file contents. 
+copyToLocal (or) get: To copy files/folders from hdfs store to local file system.
+
+
+for putty interacting via shell in windows
+maria_dev@localhost	port 2222
+
+
+cloudera: https://downloads.cloudera.com/demo_vm/virtualbox/cloudera-quickstart-vm-5.13.0-0-virtualbox.zip
+
+

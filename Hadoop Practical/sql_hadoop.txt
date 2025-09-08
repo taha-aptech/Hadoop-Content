@@ -1,0 +1,42 @@
+SELECT COUNT(*) FROM ghibli_image_data;
+
+
+1. Which platform has the highest average engagement (likes + shares + comments)?
+SELECT platform,
+       AVG(likes + shares + comments) AS avg_engagement
+FROM ghibli_image_data
+GROUP BY platform
+ORDER BY avg_engagement DESC;
+
+
+2. Which prompts generated the highest style accuracy scores?
+SELECT prompt, style_accuracy_score
+FROM ghibli_image_data
+ORDER BY style_accuracy_score DESC
+LIMIT 10;
+
+
+3. Find the top 5 users with the most images flagged for ethical concerns.
+SELECT user_id, COUNT(*) AS flagged_images
+FROM ghibli_image_data
+WHERE ethical_concerns_flag = 'Yes'
+GROUP BY user_id
+ORDER BY flagged_images DESC
+LIMIT 5;
+
+
+4. What is the average GPU usage and generation time by platform?
+SELECT platform,
+       AVG(gpu_usage) AS avg_gpu,
+       AVG(generation_time) AS avg_time
+FROM ghibli_image_data
+GROUP BY platform;
+
+
+
+5. How many images were manually edited and also flagged for ethical concerns?
+SELECT COUNT(*) AS count_edited_flagged
+FROM ghibli_image_data
+WHERE is_hand_edited = 'Yes'
+  AND ethical_concerns_flag = 'Yes';
+

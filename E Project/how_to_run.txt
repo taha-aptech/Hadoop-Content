@@ -1,0 +1,7 @@
+use
+pip install -r requirements.txt
+to install all dependencies for project
+
+navigate to current directory and then run
+jupyter notebook .
+to open notebook for interactive shell

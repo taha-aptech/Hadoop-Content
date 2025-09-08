@@ -1,0 +1,19 @@
+
+pip install hdfs
+
+python sy hdfs ko connect krwana 
+
+-------------------------------------------------------
+
+from hdfs import InsecureClient
+
+# Create HDFS client
+client = InsecureClient('http://sandbox-hdp.hortonworks.com:50070')
+
+# Path to the file
+log_file_path = '/user/maria_dev/log.txt'
+
+# Read the file content
+with client.read(log_file_path) as reader:
+    for line in reader:
+        print(line.decode('utf-8'))  # Decode bytes to string
