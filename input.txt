@@ -1,0 +1,5 @@
+Hadoop components are HDFS YARN and Map Reduce
+HDFS is used for file storage layer
+YARN is used for Managing Resources
+Map Reduces is used for Processing the job 
+Hadoop is used for big data

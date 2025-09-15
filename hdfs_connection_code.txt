@@ -1,0 +1,16 @@
+!pip install hdfs
+from hdfs import InsecureClient
+import pandas as pd
+
+# Create HDFS client
+client = InsecureClient('http://sandbox-hdp.hortonworks.com:50070')
+
+# Path to the file in HDFS
+log_file_path = '/user/maria_dev/your_file.csv'
+
+# Read the file content into a Pandas DataFrame
+with client.read(log_file_path) as reader:
+    df = pd.read_csv(reader)
+
+# Display the DataFrame
+df.head()

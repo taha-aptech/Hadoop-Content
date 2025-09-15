@@ -39,7 +39,7 @@ print("ETL Process Completed Successfully!")
 Yeh **MapReduce program** dataset ke upar chal kar **temperature-based anomaly detection** karta hai.  
 
 #### **Mapper (Python)**  
-```python
+```python 
 import sys
 
 # Read input line by line
